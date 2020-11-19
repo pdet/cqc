@@ -6,7 +6,7 @@
 using namespace std;
 using namespace chrono;
 
-int pedro(vector<int> nums) {
+int pedro(vector<int>& nums) {
     
     bool one_present = false;
     for(int i = 0; i < nums.size(); i ++){
@@ -36,7 +36,7 @@ int pedro(vector<int> nums) {
     return nums.size()+1;
 }
 
-int group_one(vector<int> nums) {
+int group_one(vector<int>& nums) {
   bool have1 = false;
   for (int i = 0; i < nums.size(); i++) {
     if (nums[i] < 0) {
@@ -72,7 +72,7 @@ int group_one(vector<int> nums) {
   return nums.size() + 1;
 }
 
-int group_two(vector<int> array) {
+int group_two(vector<int>& array) {
     for(auto i = 0; i < array.size(); i++) {
         auto value = array[i];
         if (value > 0 && value < array.size() - 1 && i + 1 != value) {
@@ -96,12 +96,12 @@ void benchmark(vector<int> &array){
     
     copy = array;
     start_timer = system_clock::now();
-    int a_2 = group_one(array);
+    int a_2 = group_one(copy);
     cout << "Group 1: "  << duration<double>(system_clock::now() - start_timer).count() << endl;
     
     copy = array;
     start_timer = system_clock::now();
-    int a_3 = group_two(array);
+    int a_3 = group_two(copy);
     cout << "Group 2: " << duration<double>(system_clock::now() - start_timer).count() << endl;
 
     if (a_1 != a_2 || a_2 != a_3){
