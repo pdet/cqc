@@ -10,52 +10,99 @@
 using namespace std;
 using namespace chrono;
 
+struct MedianTree {
+	MedianTree(int initial_median, int d) : current_median(initial_median), is_even(d % 2 == 0) {}
+
+	int GetMedianTimesTwo() {
+		if (is_even) {
+			// d is even, need to interpolate
+			// we have set it up so the min_tree is bigger than the max_tree
+			// (aka the biggest value in the min tree holds the second part of the median)
+			assert(min_tree.size() > max_tree.size());
+			auto min_max = *min_tree.rbegin();
+			return current_median + min_max;
+		} else {
+			// d is uneven, just return median times two
+			return current_median * 2;
+		}
+	}
+	void AddEntryInternal(int entry) {
+		if (entry < current_median) {
+			min_tree.insert(entry);
+		} else {
+			max_tree.insert(entry);
+		}
+	}
+
+	void ReplaceEntry(int prev_value, int entry) {
+		if (prev_value == current_median) {
+			// remove the current median and replace it with the minimum value of the max tree
+			auto min_of_max = max_tree.begin();
+			current_median = *min_of_max;
+			max_tree.erase(min_of_max);
+		} else if (prev_value < current_median) {
+			assert(min_tree.find(prev_value) != min_tree.end());
+			min_tree.erase(min_tree.find(prev_value));
+		} else {
+			assert(max_tree.find(prev_value) != max_tree.end());
+			max_tree.erase(max_tree.find(prev_value));
+		}
+		AddEntryInternal(entry);
+		Rebalance();
+	}
+	void AddEntry(int entry) {
+		AddEntryInternal(entry);
+		Rebalance();
+	}
+	void Rebalance() {
+		// check to see if the trees are unbalanced
+		while (min_tree.size() > max_tree.size() + 1) {
+			// min tree has 2 or more entries than max tree
+			// set the highest entry of the min tree as the new median
+			// insert the current median into the max tree
+			auto max_of_min = min_tree.rbegin();
+			max_tree.insert(current_median);
+			current_median = *max_of_min;
+			min_tree.erase(min_tree.find(*max_of_min));
+		}
+		while (max_tree.size() > min_tree.size()) {
+			// max tree has 2 or more entries than in tree
+			// set the lowest entry of the max tree as the new median
+			// insert the current median into the min tree
+			auto min_of_max = max_tree.begin();
+			min_tree.insert(current_median);
+			current_median = *min_of_max;
+			max_tree.erase(min_of_max);
+		}
+	}
+
+	multiset<int> min_tree;
+	multiset<int> max_tree;
+	int current_median;
+	bool is_even;
+};
 
 //! Complete the activity_notifications function below.
 int activity_notifications(vector<int>& expenditure, int d) {
-  if (expenditure.size() == 0) {
-    return 0;
-  }
-  int notification_count = 0;
-  int current_median;
-  set<int> min_tree;
-  set<int> max_tree;
-  current_median = expenditure[0];
-  for(int i = 1; i < expenditure.size(); i++) {
-    auto current_value = expenditure[i];
-    if (i >= d) {
-      auto previous_value = expenditure[i - d];
-      if (previous_value < current_median) {
-        min_tree.erase(previous_value);
-      } else {
-        max_tree.erase(previous_value);
-      }
-    }
-    if (current_value < current_median) {
-      min_tree.insert(current_value);
-    } else {
-      max_tree.insert(current_value);
-    }
-    while (std::abs(int(min_tree.size()) - int(max_tree.size())) > 1) {
-      if (min_tree.size() > max_tree.size()) {
-        auto max_of_min = min_tree.rbegin();
-        min_tree.erase(*max_of_min);
-        max_tree.insert(current_median);
-        current_median = *max_of_min;
-      } else {
-        auto min_of_max = max_tree.begin();
-        max_tree.erase(min_of_max);
-        min_tree.insert(current_median);
-        current_median = *min_of_max;
-      }
-    }
-    if (i >= d &&  current_value >= current_median * 2) {
-      notification_count++;
-    }
-  }
-
-
-  return notification_count;
+	if (expenditure.size() == 0) {
+		return 0;
+	}
+	int notification_count = 0;
+	MedianTree median_tree(expenditure[0], d);
+	for(int i = 1; i < expenditure.size(); i++) {
+		auto current_value = expenditure[i];
+		if (i >= d) {
+			auto comparison_value = median_tree.GetMedianTimesTwo();
+			if (current_value >= comparison_value) {
+				notification_count++;
+			}
+			auto previous_value = expenditure[i - d];
+			median_tree.ReplaceEntry(previous_value, current_value);
+		} else {
+			median_tree.AddEntry(current_value);
+		}
+	}
+	return notification_count;
 }
 
 //! Add new tests
@@ -117,5 +164,5 @@ void benchmark(){
 
 int main(){
 	run_tests();
-	// benchmark();
+	benchmark();
 }
