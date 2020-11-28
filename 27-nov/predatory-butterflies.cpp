@@ -13,6 +13,7 @@ int activity_notifications(vector<int>& expenditure, int d) {
   const int half_d = d >> 1;
   const int size = expenditure.size();
   
+  if (d&1) {
     for (int i = d; i < size ; i++) {
       int smallerorequal = 0;
       const int cur_val = expenditure[i];
@@ -21,6 +22,27 @@ int activity_notifications(vector<int>& expenditure, int d) {
       }
       notifications += (smallerorequal > half_d);
     }
+  } else {
+    for (int i = d; i < size ; i++) {
+      int smallerorequal = 0;
+      const int cur_val = expenditure[i];
+      for (int j = i - d; j < i; j++) {
+        smallerorequal += (expenditure[j] << 1 <= cur_val);
+      }
+      notifications += (smallerorequal > half_d);
+      if (smallerorequal == half_d) {
+        int maxsmaller[2] = {0,0};
+        int minlarger [2] = {222,222};
+        for (int j = i - d; j < i; j++) {
+          const int val = expenditure[j];
+          const int seq = (val << 1 <= cur_val);
+          maxsmaller[ seq & (val > maxsmaller[1])] = val;
+          minlarger [!seq & (val < minlarger [1])] = val;
+        }
+        notifications += (maxsmaller[1] + minlarger[1] <= cur_val);
+      }
+    }
+  }
 
   return notifications;
 }
