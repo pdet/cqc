@@ -21,6 +21,23 @@ int activity_notifications(vector<int>& expenditure, int d) {
         smallerorequal += (expenditure[j] << 1 <= cur_val);
       }
       notifications += (smallerorequal > half_d);
+      while (
+           smallerorequal >  half_d
+        && i+1 < size
+        && expenditure[i]   << 1 <= expenditure[i+1]
+        && expenditure[i-d] << 1 >  expenditure[i]
+      ) {
+        notifications++;
+        i++;
+      }
+      while (
+           smallerorequal <= half_d
+        && i+1 < size
+        && expenditure[i]        >  expenditure[i+1]
+        && expenditure[i-d] << 1 <= expenditure[i]
+      ) {
+        i++;
+      }
     }
   } else {
     for (int i = d; i < size ; i++) {
@@ -30,6 +47,23 @@ int activity_notifications(vector<int>& expenditure, int d) {
         smallerorequal += (expenditure[j] << 1 <= cur_val);
       }
       notifications += (smallerorequal > half_d);
+      while (
+           smallerorequal >  half_d
+        && i+1 < size
+        && expenditure[i]   << 1 <= expenditure[i+1]
+        && expenditure[i-d] << 1 >  expenditure[i]
+      ) {
+        notifications++;
+        i++;
+      }
+      while (
+           smallerorequal <  half_d
+        && i+1 < size
+        && expenditure[i]        >  expenditure[i+1]
+        && expenditure[i-d] << 1 <= expenditure[i]
+      ) {
+        i++;
+      }
       if (smallerorequal == half_d) {
         int maxsmaller[2] = {0,0};
         int minlarger [2] = {222,222};
