@@ -106,6 +106,12 @@ void benchmark(){
 	run_benchmark("benchmark/b_3.txt",1026);
 	run_benchmark("benchmark/b_4.txt",492);
 	run_benchmark("benchmark/b_5.txt",926);
+	cout << endl;
+	run_benchmark("benchmark/b_1-.txt",2501);
+	run_benchmark("benchmark/b_2-.txt",2663);
+	run_benchmark("benchmark/b_3-.txt",2917);
+	run_benchmark("benchmark/b_4-.txt",1858);
+	run_benchmark("benchmark/b_5-.txt",1855);
 }
 
 

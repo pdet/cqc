@@ -146,7 +146,7 @@ void run_benchmark(string file_path, int expected_result){
 	cout << "Benchmark " << file_path << ": "
 	<< duration<double>(system_clock::now() - start_timer).count() << endl;
 	if (result != expected_result){
-		cout << "Benchmark " << file_path << " outputs the wrong result";
+		cout << "Benchmark " << file_path << " outputs the wrong result: " << result << " != " << expected_result << endl;
 	}
 }
 
@@ -158,6 +158,12 @@ void benchmark(){
 	run_benchmark("benchmark/b_3.txt",1026);
 	run_benchmark("benchmark/b_4.txt",492);
 	run_benchmark("benchmark/b_5.txt",926);
+	cout << endl;
+	run_benchmark("benchmark/b_1-.txt",2501);
+	run_benchmark("benchmark/b_2-.txt",2663);
+	run_benchmark("benchmark/b_3-.txt",2917);
+	run_benchmark("benchmark/b_4-.txt",1858);
+	run_benchmark("benchmark/b_5-.txt",1855);
 }
 
 
