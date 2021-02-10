@@ -13,3 +13,6 @@
 
 ## 28-jan
 	Find minimum remove to make valid parentheses
+	
+## 04-feb
+	Find maximum amount of money you can rob
