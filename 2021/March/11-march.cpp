@@ -53,11 +53,66 @@ try to compile with: g++ -std=c++11 2021/March/11-march.cpp
 #include <vector>
 #include <iostream>
 #include <cassert>
+#include <unordered_set>
+using namespace std;
 
-int possibleSums(std::vector<int> coins, std::vector<int> quantity)
+int possibleSums(vector<int> coins, vector<int> quantity)
 {
-    // code here
-    return 0;
+    std::unordered_set<int> dp;
+
+    auto counter = 0;
+    for (size_t i = 0; i != coins.size(); ++i)
+    {
+        for (size_t j = 0; j != quantity[i]; ++j)
+        {
+            auto sum = coins[i];
+            vector<int> tmp;
+            tmp.reserve(dp.size());
+            for (auto val : dp)
+            {
+                tmp.push_back(sum + val);
+            }
+            dp.insert(sum);
+            for (auto val : tmp)
+            {
+                dp.insert(val);
+            }
+        }
+    }
+    return dp.size();
+}
+
+int possibleSums_opt(vector<int> coins, vector<int> quantity)
+{
+    std::unordered_set<int> dp;
+
+    auto counter = 0;
+    for (size_t i = 0; i != coins.size(); ++i)
+    {
+        vector<int> candidates;
+        candidates.reserve(quantity[i]);
+        for (size_t j = 0; j != quantity[i]; ++j)
+        {
+            candidates.push_back(coins[i] * (j + 1));
+        }
+        unordered_set<int> tmp;
+        for (auto val : dp)
+        {
+            for (auto &candidate : candidates)
+            {
+                tmp.insert(val + candidate);
+            }
+        }
+        for (auto &candidate : candidates)
+        {
+            dp.insert(candidate);
+        }
+        for (auto &subsum : tmp)
+        {
+            dp.insert(subsum);
+        }
+    }
+    return dp.size();
 }
 
 int main(int argc, char **argv)
@@ -80,7 +135,7 @@ int main(int argc, char **argv)
     assert(possibleSums(input1_3, input2_3) == 5);
 
     std::vector<int> input1_4 = {1, 2};
-    std::vector<int> input2_4 = {5000, 2};
+    std::vector<int> input2_4 = {50000, 2};
     assert(possibleSums(input1_4, input2_4) == 50004);
 
     std::vector<int> input1_5 = {1, 1, 1, 1, 1};
